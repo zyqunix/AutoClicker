@@ -8,3 +8,5 @@
       - Open `AutoClicker.sln` and build using Visual Studio
       - Open cd into the root directory -> `dotnet build`
   - Install binaries with executable from [releases](https://github.com/zyqunix/AutoClicker/releases)
+
+### Licensed under MIT
