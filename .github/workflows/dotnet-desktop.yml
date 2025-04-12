@@ -1,10 +1,10 @@
-name: Build and Release AutoClicker
+name: .NET Core Desktop
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 permissions:
   contents: write
@@ -22,28 +22,37 @@ jobs:
       Project_Path: Autoclicker/Autoclicker.csproj
 
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-    - name: Set up .NET SDK
+    - name: Install .NET Core
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
     - name: Restore dependencies
-      run: dotnet restore $env:Solution_Name
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
 
-    - name: Build project
-      run: dotnet build $env:Solution_Name --configuration ${{ matrix.configuration }}
+    - name: Build the application
+      run: msbuild $env:Solution_Name /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
 
-    - name: Publish as a single-file executable
-      run: dotnet publish $env:Solution_Name --configuration ${{ matrix.configuration }} --output ./publish --self-contained true --runtime win-x64 /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
+    - name: Run tests
+      run: dotnet test
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: v${{ github.run_number }}
         name: Release v${{ github.run_number }}
-        files: ./publish/AutoClicker.exe
+        files: Autoclicker/bin/Release/net8.0-windows/Autoclicker.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
