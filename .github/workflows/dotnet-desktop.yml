@@ -19,7 +19,7 @@ jobs:
 
     env:
       Solution_Name: AutoClicker.sln
-      Test_Project_Path: Autoclicker.csproj
+      Project_Path: Autoclicker/Autoclicker.csproj
 
     steps:
     - name: Checkout
@@ -35,10 +35,7 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    - name: Execute unit tests
-      run: dotnet test
-
-    - name: Restore the application
+    - name: Restore dependencies
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
@@ -48,11 +45,14 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
 
+    - name: Run tests
+      run: dotnet test
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: v${{ github.run_number }}
         name: Release v${{ github.run_number }}
-        files: bin/Release/AutoClicker.exe
+        files: Autoclicker/bin/Release/net8.0-windows/Autoclicker.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
