@@ -30,7 +30,7 @@
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="5.7.0">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; compile; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MouseKeyHook" Version="5.7.1" />
   </ItemGroup>
